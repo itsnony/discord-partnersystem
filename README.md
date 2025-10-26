@@ -25,38 +25,38 @@ Ein vollständiger Discord Bot für Partner-Management mit automatischer Werbung
 ## Installation
 
 1. Repository klonen:
-\`\`\`bash
-git clone <repository-url>
+```bash
+git clone [[<repository-url>](https://github.com/itsnony/discord-partnersystem)](https://github.com/itsnony/discord-partnersystem)
 cd discord-partner-bot
-\`\`\`
+```
 
 2. Dependencies installieren:
-\`\`\`bash
+```bash
 npm install
-\`\`\`
+```
 
 3. `.env` Datei erstellen:
-\`\`\`bash
+```bash
 cp .env.example .env
-\`\`\`
+```
 
 4. `.env` Datei ausfüllen (siehe Konfiguration unten)
 
 5. Bot starten:
-\`\`\`bash
+```bash
 npm start
-\`\`\`
+```
 
 Für Entwicklung mit Auto-Reload:
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 ## Konfiguration
 
 Erstelle eine `.env` Datei mit folgenden Werten:
 
-\`\`\`env
+```env
 # Discord Bot Token (von https://discord.com/developers/applications)
 TOKEN=dein_bot_token_hier
 
@@ -81,15 +81,15 @@ DISCORD_CLIENT_ID=deine_client_id
 DISCORD_CLIENT_SECRET=dein_client_secret
 DISCORD_CALLBACK_URL=http://localhost:3000/auth/callback
 SESSION_SECRET=ein_zufälliger_geheimer_string
-\`\`\`
+```
 
 ### Owner IDs konfigurieren
 
 Öffne `config.js` und trage deine Discord User IDs ein:
 
-\`\`\`javascript
+```javascript
 ownerIds: ["DEINE_USER_ID_1", "DEINE_USER_ID_2"]
-\`\`\`
+```
 
 So findest du deine User ID:
 1. Aktiviere den Entwicklermodus in Discord (Einstellungen → Erweitert → Entwicklermodus)
@@ -99,17 +99,17 @@ So findest du deine User ID:
 
 In `config.js` kannst du die Partner-Rolle ID anpassen:
 
-\`\`\`javascript
+```javascript
 partnerRoleId: "DEINE_ROLLEN_ID"
-\`\`\`
+```
 
 ### Mindestanforderungen anpassen
 
 In `config.js`:
 
-\`\`\`javascript
+```javascript
 minMemberCount: 100  // Mindestanzahl Mitglieder
-\`\`\`
+```
 
 ## Commands
 
@@ -201,9 +201,9 @@ Erforderliche Discord Permissions:
 - Create Invites (für Invite-Validierung)
 
 Bot Invite Link:
-\`\`\`
+```
 https://discord.com/api/oauth2/authorize?client_id=DEINE_CLIENT_ID&permissions=268445760&scope=bot%20applications.commands
-\`\`\`
+```
 
 ## Troubleshooting
 
@@ -252,7 +252,7 @@ Bei Fragen oder Problemen erstelle ein Issue im Repository.
 ## Credits
 
 Entwickelt mit:
-- discord.js v15
+- discord.js v14
 - Express.js
 - MongoDB & Mongoose
 - EJS Templates

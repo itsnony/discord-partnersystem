@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Partner Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.0.0/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    body { font-family: 'Outfit', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Inlined navbar instead of using include -->
+  <nav class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center space-x-8">
+          <a href="/dashboard" class="flex items-center space-x-2">
+            <i class="ri-shield-user-line text-2xl text-indigo-600"></i>
+            <span class="font-bold text-xl text-gray-900">Partner Dashboard</span>
+          </a>
+          
+          <div class="hidden md:flex space-x-4">
+            <a href="/dashboard" class="px-3 py-2 rounded-lg bg-indigo-100 text-indigo-700 transition">
+              <i class="ri-dashboard-line mr-1"></i>Dashboard
+            </a>
+            <a href="/dashboard/partners" class="px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition">
+              <i class="ri-team-line mr-1"></i>Partner
+            </a>
+            <a href="/dashboard/applications" class="px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition">
+              <i class="ri-mail-line mr-1"></i>Bewerbungen
+            </a>
+          </div>
+        </div>
+        
+        <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-3">
+            <img src="https://cdn.discordapp.com/avatars/<%= user.id %>/<%= user.avatar %>.png" alt="<%= user.username %>" class="w-8 h-8 rounded-full">
+            <span class="text-sm font-medium text-gray-700"><%= user.username %></span>
+          </div>
+          <a href="/auth/logout" class="px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition">
+            <i class="ri-logout-box-line mr-1"></i>Abmelden
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+  
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+      <p class="text-gray-600 mt-1">Übersicht über deine Partnerschaften</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-600">Aktive Partner</p>
+            <p class="text-3xl font-bold text-gray-900 mt-1"><%= stats.totalPartners %></p>
+          </div>
+          <i class="ri-team-line text-4xl text-indigo-600"></i>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-600">Offene Bewerbungen</p>
+            <p class="text-3xl font-bold text-gray-900 mt-1"><%= stats.pendingApplications %></p>
+          </div>
+          <i class="ri-mail-line text-4xl text-yellow-600"></i>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm text-gray-600">Bewerbungssystem</p>
+            <p class="text-lg font-semibold mt-1 <%= stats.applicationsOpen ? 'text-green-600' : 'text-red-600' %>">
+              <%= stats.applicationsOpen ? 'Geöffnet' : 'Geschlossen' %>
+            </p>
+          </div>
+          <button onclick="toggleApplications()" class="px-4 py-2 rounded-lg <%= stats.applicationsOpen ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'bg-green-100 text-green-700 hover:bg-green-200' %> transition">
+            <%= stats.applicationsOpen ? 'Schließen' : 'Öffnen' %>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <h2 class="text-xl font-bold text-gray-900 mb-4">Schnellaktionen</h2>
+      <div class="flex flex-wrap gap-3">
+        <a href="/dashboard/applications" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+          <i class="ri-mail-line mr-2"></i>Bewerbungen ansehen
+        </a>
+        <a href="/dashboard/partners" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+          <i class="ri-team-line mr-2"></i>Partner verwalten
+        </a>
+        <button onclick="runAudit()" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+          <i class="ri-refresh-line mr-2"></i>Audit durchführen
+        </button>
+      </div>
+    </div>
+
+    <!-- Recent Applications -->
+    <% if (pending.length > 0) { %>
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-xl font-bold text-gray-900">Neueste Bewerbungen</h2>
+      </div>
+      <div class="divide-y divide-gray-200">
+        <% pending.slice(0, 5).forEach(app => { %>
+        <div class="px-6 py-4 hover:bg-gray-50 transition">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+              <% if (app.icon) { %>
+              <img src="<%= app.icon %>" alt="<%= app.name %>" class="w-12 h-12 rounded-full">
+              <% } else { %>
+              <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center">
+                <i class="ri-team-line text-indigo-600 text-xl"></i>
+              </div>
+              <% } %>
+              <div>
+                <h3 class="font-semibold text-gray-900"><%= app.name %></h3>
+                <p class="text-sm text-gray-600"><%= app.memberCount %> Mitglieder</p>
+              </div>
+            </div>
+            <div class="flex space-x-2">
+              <button onclick="acceptPartner('<%= app._id %>')" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                <i class="ri-check-line"></i>
+              </button>
+              <button onclick="denyPartner('<%= app._id %>')" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                <i class="ri-close-line"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+    </div>
+    <% } %>
+  </div>
+
+  <script>
+    async function toggleApplications() {
+      try {
+        const res = await fetch('/api/partners/settings/applications', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          location.reload();
+        } else {
+          alert('Fehler: ' + data.message);
+        }
+      } catch (error) {
+        alert('Fehler beim Umschalten der Bewerbungen');
+      }
+    }
+
+    async function runAudit() {
+      if (!confirm('Möchtest du wirklich einen Audit durchführen?')) return;
+      try {
+        const res = await fetch('/api/partners/audit', { method: 'POST' });
+        const data = await res.json();
+        alert(data.message);
+      } catch (error) {
+        alert('Fehler beim Durchführen des Audits');
+      }
+    }
+
+    async function acceptPartner(id) {
+      try {
+        const res = await fetch(`/api/partners/accept/${id}`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          location.reload();
+        } else {
+          alert('Fehler: ' + data.message);
+        }
+      } catch (error) {
+        alert('Fehler beim Akzeptieren des Partners');
+      }
+    }
+
+    async function denyPartner(id) {
+      if (!confirm('Möchtest du diese Bewerbung wirklich ablehnen?')) return;
+      try {
+        const res = await fetch(`/api/partners/deny/${id}`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          location.reload();
+        } else {
+          alert('Fehler: ' + data.message);
+        }
+      } catch (error) {
+        alert('Fehler beim Ablehnen der Bewerbung');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -26,7 +26,7 @@ Ein vollständiger Discord Bot für Partner-Management mit automatischer Werbung
 
 1. Repository klonen:
 ```bash
-git clone [[<repository-url>](https://github.com/itsnony/discord-partnersystem)](https://github.com/itsnony/discord-partnersystem)
+git clone https://github.com/itsnony/discord-partnersystem
 cd discord-partner-bot
 ```
 
